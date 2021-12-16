@@ -3,18 +3,17 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsI
 
 const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-export async function createGame(game){
+export async function createGame(name1, name2, score1, score2){
+
+    // create a single new game in the games table using the above object
     const response = await client
         .from('games')
-        .insert([
-            {
-                ...game,
-                user_id: client.auth.user().id, 
-            }
-        ])
-        .single();
-    // create a single new game in the games table using the above object
-    
+        .insert([{
+            name1,
+            name2,
+            score1,
+            score2
+        }]);
     return checkError(response);
 }
 
@@ -48,13 +47,13 @@ export async function redirectToGames() {
 export async function signupUser(email, password){
     const response = await client.auth.signUp({ email, password });
     
-    return checkError(response);
+    return response.user;
 }
 
 export async function signInUser(email, password){
     const response = await client.auth.signIn({ email, password });
 
-    return checkError(response);
+    return response.user;
 }
 
 export async function logout() {
